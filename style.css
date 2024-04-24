@@ -1,0 +1,28 @@
+#battlefield {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px auto;
+  width: 850px;
+  height: 850px;
+  background-color: rgb(22, 81, 168);
+}
+
+.battlegrid {
+  width: 800px;
+  height: 800px;
+  margin: 0 40px 40px 0;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 2px solid white;
+  width: 20px;
+  height: 20px;
+}
+
+.tablecellsname {
+  color: white;
+  font-size: 20px;
+  border: none;
+}
