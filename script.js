@@ -33,40 +33,51 @@ let controller = {
     let startFire = document.getElementById('firebtn');
 
     startFire.addEventListener('click', function () {
-      let coordValue = coordinates.value;
-      let firstCharCoords = coordValue.charAt(0).toUpperCase();
+      let coordinatesValue = coordinates.value;
+      let firstCharCoords = coordinatesValue.charAt(0).toUpperCase();
 
-      if(!coordValue.includes(' ')) {
-        if(coordValue.length < 1 || coordValue.length === 1) {
-          console.log('Необходимо указать координаты из двух значений');
-        } else if (coordValue.length === 2) {
-          let reg = new RegExp('^[1-9]+$');
-          if(!coordSign.includes(firstCharCoords)) {
-            console.log('Первая координата должна соответствовать букве в левой части игрового поля')
-          } else if (!reg.test(coordValue.charAt(1))) {
-            console.log('Вторая координата должна соответствовать числу в верхней части игрового поля');
+      if(!coordinatesValue.includes(' ')) { //Checking whitespace in the coordinates
+
+        if(coordinatesValue.length < 1) {
+          console.log('Enter the coordinates');
+        } else {
+
+          let checkLetter = new RegExp('^[a-zA-Z]+$');
+          if(checkLetter.test(coordinatesValue.charAt(0)) && coordSign.includes(firstCharCoords)) { //Checking the first coordinate, it must be a letter that match with array coordSign
+
+            let checkSecondNum = new RegExp('^[1-9]+$');
+            if(checkSecondNum.test(coordinatesValue.charAt(1))) { //Checking the second character, it must be a digit
+
+              if(coordinatesValue.length === 2) {
+                console.log(coordinatesValue);
+              } else {
+
+                if(coordinatesValue.length === 3) {
+                  let checkThirdNum = new RegExp('^[0]+$');
+                  if(checkSecondNum.test(coordinatesValue.charAt(1)) && checkLetter.test(coordinatesValue.charAt(2))) {
+                    console.log('После второй координаты не указывайте буквы, это приводит к ошибке');
+                  } else if(coordinatesValue.charAt(1) == 1 && checkThirdNum.test(coordinatesValue.charAt(2))) { //Checking the second and the third characters - both digits. The second character is equal the one, the third is equal to zero 
+                    console.log(coordinatesValue);
+                  } else {
+                    console.log('Максимальное численное значение координаты на поле равно 10');
+                  }
+                } else {
+                  console.log('Введено слишком много символов, введите координаты корректно, например: A5, b10, J9, c3. Регистр не имеет значения');
+                }
+
+              }
+            } else {
+              console.log('Вторая координата должна соответствовать числу в верхней части игрового поля');
+            }
+
+          } else {
+            console.log('Первая координата не соотвутствует значениям указанным слева игрового поля');
           }
-        } else if(coordValue.length > 3) {
-          console.log('Введено слишком много символов.');
-        } else if(coordValue.length === 3) {
-          let regLetter = new RegExp('^[a-zA-Z]+$');
-          let regMatch = new RegExp('^[0-9]+$');
-          if((coordValue.charAt(1) == 0 && regMatch.test(coordValue.charAt(2)))) {
-            console.log('Указывайте пожалуйста координаты без лишних нулей после буквы: А5, В10. Указание координаты как F00, С09 или A0B является ошибкой.');
-          } else if((regLetter.test(coordValue.charAt(1)) && regMatch.test(coordValue.charAt(2)))) {
-            console.log('Указывайте пожалуйста координаты в значении Буква-Цифра: А7, вторая буква в координатах AB5 является ошибкой.');
-          } else if(!(coordValue.charAt(1) == 1 && coordValue.charAt(2) == 0)) {
-            console.log('Максимальное численное значение координаты на поле равно 10.');
-          } 
+
         }
       } else {
         console.log('Вводимые координаты не должны содержать пробелов');
       }
-
-
-      // Проверка на F0F, A0B, C1D
-      // Проверка только чисел 000, 123, 777
-      // Проверка только букв ААА, BBB, CGD
 
     }); //startFire.addEventListener
   } //getCoords: function
