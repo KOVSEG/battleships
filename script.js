@@ -7,22 +7,48 @@
 
 let model = {
   ships: [
-    { shipLength: 4, localisation: ['01', '02', '03', '04'], hits: ['', '', '', '',] },
-    { shipLength: 3, localisation: ['48', '58', '68'], hits: ['', '', '',] },
-    { shipLength: 3, localisation: ['91', '92', '93'], hits: ['', '', '',] }
+    {localisation: ['01', '02', '03', '04'], hits: ['', '', '', '',] },
+    {localisation: ['21', '22', '23'], hits: ['', '', '',] },
+    {localisation: ['08', '09', '010'], hits: ['', '', '',] },
+    {localisation: ['210', '310'], hits: ['', '']},
+    {localisation: ['16', '17'], hits: ['', '']},
+    {localisation: ['610', '710'], hits: ['', '']},
+    {localisation: ['910'], hits: ['']},
+    {localisation: ['73'], hits: ['']},
+    {localisation: ['85'], hits: ['']},
+    {localisation: ['91'], hits: ['']}
   ],
-  fire: function (coordinates) {
 
+  fire: function (coordinates) {
     for(let ship of this.ships) {
       if(ship.localisation.includes(coordinates)) {
-        ship.hits[ship.localisation.indexOf(coordinates)] = 'HIT';
-        console.log(ship.hits);
+        if(ship.hits[ship.localisation.indexOf(coordinates)] == 'HIT') {
+          alert('You have already shot here');
+        } else {
+          ship.hits[ship.localisation.indexOf(coordinates)] = 'HIT';
+          this.checkSunk(ship);
+        }
         view.hit(coordinates);
         return true;
       }
     }
     view.miss(coordinates);
     return false;
+  },
+
+  checkSunk: function(ship) {
+    let score = 0;
+    for(let i = 0; i < ship.hits.length; i++) {
+      if(ship.hits[i] == 'HIT') {
+        score++;
+      }
+    }
+
+    if(ship.localisation.length === score) {
+      alert('Ship is sunk!');
+      controller.sunkedShips.push(score);
+      return true;
+    }
   }
 };
 
@@ -41,6 +67,7 @@ let view = {
 };
 
 let controller = {
+  sunkedShips: [],
   getCoords: function(param) {
     let coordSymb = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
     let getParam = '';
@@ -51,9 +78,16 @@ let controller = {
       getParam = coordSymb.indexOf(param[0]) + param[1];
     }
 
-
     model.fire(getParam);
+    if(getParam) {
+      this.allShipsSunk();
+    }
   },
+  allShipsSunk: function() {
+    if(this.sunkedShips.length === model.ships.length) {
+      alert('Game over! All ships sank!');
+    }
+  }
 };
 
 
