@@ -4,21 +4,28 @@
 // Combat ship, 1 deck (1 cell) - 4 unit's;
 // 
 
+
 let model = {
   ships: [
-    { shipLength: 4, localisation: ['01', '02', '03', '04'], hits: [] },
+    { shipLength: 4, localisation: ['01', '02', '03', '04'], hits: ['', '', '', '',] },
+    { shipLength: 3, localisation: ['48', '58', '68'], hits: ['', '', '',] },
+    { shipLength: 3, localisation: ['91', '92', '93'], hits: ['', '', '',] }
   ],
   fire: function (coordinates) {
-    for(ship of this.ships) {
+
+    for(let ship of this.ships) {
       if(ship.localisation.includes(coordinates)) {
-        ship.hits.push('hit');
+        ship.hits[ship.localisation.indexOf(coordinates)] = 'HIT';
+        console.log(ship.hits);
         view.hit(coordinates);
-      } else {
-        view.miss(coordinates)
+        return true;
       }
     }
+    view.miss(coordinates);
+    return false;
   }
 };
+
 
 let view = {
   miss: function(coordinates) {
@@ -44,7 +51,7 @@ let controller = {
       getParam = coordSymb.indexOf(param[0]) + param[1];
     }
 
-    // далее необходимо вызвать модель, обработать введеные координаты, определить попадание было или промах и после полученного итога вывести на игровом поле
+
     model.fire(getParam);
   },
 };
@@ -73,7 +80,6 @@ function checkCoordinates() {
           //Checking the second character, it must be a digit
           if(coordinatesValue.length === 2) {
             controller.getCoords(coordinatesValue);
-            console.log(coordinatesValue);
           } else {
 
             if(coordinatesValue.length === 3) {
