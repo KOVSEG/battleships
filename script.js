@@ -6,17 +6,18 @@
 
 
 let model = {
+  battleFieldLength: 10,
   ships: [
-    {localisation: ['01', '02', '03', '04'], hits: ['', '', '', '',] },
-    {localisation: ['21', '22', '23'], hits: ['', '', '',] },
-    {localisation: ['08', '09', '010'], hits: ['', '', '',] },
-    {localisation: ['210', '310'], hits: ['', '']},
-    {localisation: ['16', '17'], hits: ['', '']},
-    {localisation: ['610', '710'], hits: ['', '']},
-    {localisation: ['910'], hits: ['']},
-    {localisation: ['73'], hits: ['']},
-    {localisation: ['85'], hits: ['']},
-    {localisation: ['91'], hits: ['']}
+    {localisation: ['', '', '', ''], hits: ['', '', '', '',] },
+    {localisation: ['', '', ''], hits: ['', '', '',] },
+    {localisation: ['', '', ''], hits: ['', '', '',] },
+    {localisation: ['', ''], hits: ['', '']},
+    {localisation: ['', ''], hits: ['', '']},
+    {localisation: ['', ''], hits: ['', '']},
+    {localisation: [''], hits: ['']},
+    {localisation: [''], hits: ['']},
+    {localisation: [''], hits: ['']},
+    {localisation: [''], hits: ['']}
   ],
 
   fire: function (coordinates) {
@@ -49,6 +50,41 @@ let model = {
       controller.sunkedShips.push(score);
       return true;
     }
+  },
+
+  autoLocationShips: function() {
+    let getDirection = Math.floor(Math.random() * 2);
+
+    for(let ship of this.ships) {
+      let shipLength = ship.localisation.length;
+      let getCoordinateX = Math.floor(Math.random() * 10);
+      let getCoordinateY = Math.floor(Math.random() * (11 - 1) + 1);
+
+      if(getDirection) {
+        //vertical direction
+        if(getCoordinateX > (this.battleFieldLength - shipLength)) {
+          getCoordinateX = getCoordinateX - shipLength;
+        }
+        for(let i = 0; i < shipLength; i++) {
+          let concatCoordinates = String(getCoordinateX) + String(getCoordinateY);
+          getCoordinateX = getCoordinateX + 1;
+          ship.localisation[i] = concatCoordinates;
+        }
+      } else {
+        //horizontal direction
+        if(getCoordinateY == 0) {
+          getCoordinateY = getCoordinateY + 1;
+        }
+        if(getCoordinateY > (this.battleFieldLength - shipLength)) {
+          getCoordinateY = getCoordinateY - shipLength;
+        }
+        for(let i = 0; i < shipLength; i++) {
+          let concatCoordinates = String(getCoordinateX) + String(getCoordinateY);
+          getCoordinateY = getCoordinateY + 1;
+          ship.localisation[i] = concatCoordinates;
+        }
+      }
+    }
   }
 };
 
@@ -65,6 +101,7 @@ let view = {
     showMiss.innerText = 'HIT';
   },
 };
+
 
 let controller = {
   sunkedShips: [],
@@ -156,4 +193,6 @@ window.onload = init;
 function init() {
   let startFire = document.getElementById('firebtn');
   startFire.addEventListener('click', checkCoordinates)
+
+  model.autoLocationShips();
 };
