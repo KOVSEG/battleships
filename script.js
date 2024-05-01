@@ -2,22 +2,21 @@
 // Cruiser, 3 deck's (3 cell's) - 2 unit's;
 // Destroyer, 2 deck's (2 cell's) - 3 unit's;
 // Combat ship, 1 deck (1 cell) - 4 unit's;
-// 
 
 
 let model = {
   battleFieldLength: 10,
   ships: [
-    {localisation: ['', '', '', ''], hits: ['', '', '', '',] },
-    {localisation: ['', '', ''], hits: ['', '', '',] },
-    {localisation: ['', '', ''], hits: ['', '', '',] },
-    {localisation: ['', ''], hits: ['', '']},
-    {localisation: ['', ''], hits: ['', '']},
-    {localisation: ['', ''], hits: ['', '']},
-    {localisation: [''], hits: ['']},
-    {localisation: [''], hits: ['']},
-    {localisation: [''], hits: ['']},
-    {localisation: [''], hits: ['']}
+    {deck: 4, localisation: [], hits: ['', '', '', '',] },
+    {deck: 3, localisation: [], hits: ['', '', '',] },
+    {deck: 3, localisation: [], hits: ['', '', '',] },
+    {deck: 3, localisation: [], hits: ['', '']},
+    {deck: 2, localisation: [], hits: ['', '']},
+    {deck: 2, localisation: [], hits: ['', '']},
+    {deck: 1, localisation: [], hits: ['']},
+    {deck: 1, localisation: [], hits: ['']},
+    {deck: 1, localisation: [], hits: ['']},
+    {deck: 1, localisation: [], hits: ['']}
   ],
 
   fire: function (coordinates) {
@@ -53,41 +52,61 @@ let model = {
   },
 
   autoLocationShips: function() {
-    let getDirection = Math.floor(Math.random() * 2);
-
+    let location;
     for(let ship of this.ships) {
-      let shipLength = ship.localisation.length;
-      let getCoordinateX = Math.floor(Math.random() * 10);
-      let getCoordinateY = Math.floor(Math.random() * (11 - 1) + 1);
 
-      if(getDirection) {
-        //vertical direction
-        if(getCoordinateX > (this.battleFieldLength - shipLength)) {
-          getCoordinateX = getCoordinateX - shipLength;
-        }
-        for(let i = 0; i < shipLength; i++) {
-          let concatCoordinates = String(getCoordinateX) + String(getCoordinateY);
-          getCoordinateX = getCoordinateX + 1;
-          ship.localisation[i] = concatCoordinates;
-        }
+      do {
+        location = this.getLocations(ship);
+      } while(this.collision(location))
+
+      ship.localisation = location;
+    }
+  },
+
+  getLocations: function (ship) {
+    let shipLength = ship.deck;
+    let direction = Math.floor(Math.random() * 2);
+    let concatCoordinates;
+    let getX = Math.floor(Math.random() * 10);
+    let getY = Math.floor(Math.random() * (11 - 1) + 1);
+    let coordinate = [];
+
+    if(getX > (this.battleFieldLength - shipLength)) {
+      getX = getX - shipLength;
+    }
+    if(getY > (this.battleFieldLength - shipLength)) {
+      getY = getY - shipLength;
+    }
+    if(getY == 0) {
+      getY = getY + 1;
+    }
+
+    for(let i = 0; i < shipLength; i++) { 
+      if(direction === 1) {
+        concatCoordinates = String(getX) + String(getY);
+        getX = getX + 1;
+        coordinate[i] = concatCoordinates;
       } else {
-        //horizontal direction
-        if(getCoordinateY == 0) {
-          getCoordinateY = getCoordinateY + 1;
-        }
-        if(getCoordinateY > (this.battleFieldLength - shipLength)) {
-          getCoordinateY = getCoordinateY - shipLength;
-        }
-        for(let i = 0; i < shipLength; i++) {
-          let concatCoordinates = String(getCoordinateX) + String(getCoordinateY);
-          getCoordinateY = getCoordinateY + 1;
-          ship.localisation[i] = concatCoordinates;
+        concatCoordinates = String(getX) + String(getY);
+        getY = getY + 1;
+        coordinate[i] = concatCoordinates;
+      }
+    }
+    return coordinate;
+  },
+
+  collision: function(location) {
+    for(let i = 0; i < this.ships.length; i++) {
+      let ship = this.ships[i];
+      for(let k = 0; k < location.length; k++) {
+        if(ship.localisation.includes(location[k])) {
+          return true;
         }
       }
     }
+    return false;
   }
 };
-
 
 let view = {
   miss: function(coordinates) {
@@ -195,4 +214,5 @@ function init() {
   startFire.addEventListener('click', checkCoordinates)
 
   model.autoLocationShips();
+  console.log(model.ships);
 };
